@@ -15,11 +15,11 @@ const TodosProvider = ({ children }) => {
     }
   };
 
-  const addTodo = async (todo) => {
+  const addTodo = async (description) => {
     try {
       const res = await fetch("/api/createTodo", {
         method: "POST",
-        body: JSON.stringify({ description: todo.description }),
+        body: JSON.stringify({ description }),
         headers: { "Content-Type": "application/json" },
       });
 

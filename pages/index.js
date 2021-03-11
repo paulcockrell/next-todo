@@ -2,6 +2,7 @@ import Head from "next/head";
 import Navbar from "../components/Navbar";
 import { table, minifyRecords } from "./api/utils/Airtable";
 import Todo from "../components/Todo";
+import TodoForm from "../components/TodoForm";
 import { TodosContext } from "../contexts/TodosContext";
 import { useEffect, useContext } from "react";
 import { useUser } from "@auth0/nextjs-auth0";
@@ -24,12 +25,18 @@ export default function Home({ initialTodos }) {
       <Navbar user={user} />
 
       <main>
-        <h1>Todo app</h1>
-        {error && <div>{error.message}</div>}
         {user && (
-          <ul>
-            {todos && todos.map((todo) => <Todo key={todo.id} todo={todo} />)}
-          </ul>
+          <>
+            <h1 className="text-2xl text-center mb-4">My Todos</h1>
+
+            <TodoForm />
+
+            {error && <div>{error.message}</div>}
+
+            <ul>
+              {todos && todos.map((todo) => <Todo key={todo.id} todo={todo} />)}
+            </ul>
+          </>
         )}
       </main>
     </div>
