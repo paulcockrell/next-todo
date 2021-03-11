@@ -13,6 +13,7 @@ export default async (req, res) => {
     res.statusCode = 200;
     res.json(createdRecord);
   } catch (err) {
+    console.error(err);
     res.statusCode = 500;
     res.json({ msg: "Something went wrong" });
   }
