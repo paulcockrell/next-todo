@@ -4,8 +4,10 @@ import { table, minifyRecords } from "./api/utils/Airtable";
 import Todo from "../components/Todo";
 import { TodosContext } from "../contexts/TodosContext";
 import { useEffect, useContext } from "react";
+import { useUser } from "@auth0/nextjs-auth0";
 
 export default function Home({ initialTodos }) {
+  const { user, error } = useUser();
   const { todos, setTodos } = useContext(TodosContext);
 
   useEffect(() => {
@@ -19,13 +21,16 @@ export default function Home({ initialTodos }) {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <Navbar />
+      <Navbar user={user} />
 
       <main>
         <h1>Todo app</h1>
-        <ul>
-          {todos && todos.map((todo) => <Todo key={todo.id} todo={todo} />)}
-        </ul>
+        {error && <div>{error.message}</div>}
+        {user && (
+          <ul>
+            {todos && todos.map((todo) => <Todo key={todo.id} todo={todo} />)}
+          </ul>
+        )}
       </main>
     </div>
   );
