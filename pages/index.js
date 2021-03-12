@@ -5,7 +5,7 @@ import Todo from "../components/Todo";
 import TodoForm from "../components/TodoForm";
 import { TodosContext } from "../contexts/TodosContext";
 import { useEffect, useContext } from "react";
-import { useUser } from "@auth0/nextjs-auth0";
+import { useUser, getSession, withPageAuthRequired } from "@auth0/nextjs-auth0";
 
 export default function Home({ initialTodos }) {
   const { user, error } = useUser();
@@ -43,9 +43,45 @@ export default function Home({ initialTodos }) {
   );
 }
 
-export async function getServerSideProps(_context) {
+/*
+ * This will automatically redirect to the auth0 login page if there is no valid session
+ * This is not appropriate in our case, as there is only one page in this app.
+  export const getServerSideProps = withPageAuthRequired({
+    getServerSideProps: async (_context) => {
+      try {
+        const todos = await table.select({}).firstPage();
+  
+        return {
+          props: {
+            initialTodos: minifyRecords(todos),
+          },
+        };
+      } catch (err) {
+        console.error(err);
+  
+        return {
+          props: {
+            err: "Something went wrong",
+          },
+        };
+      }
+    },
+  });
+*/
+
+export async function getServerSideProps({ req, res } = context) {
+  const session = getSession(req, res);
+
+  let todos = [];
+
   try {
-    const todos = await table.select({}).firstPage();
+    if (session?.user) {
+      todos = await table
+        .select({
+          filterByFormula: `userId = "${session.user.sub}"`,
+        })
+        .firstPage();
+    }
 
     return {
       props: {
@@ -57,6 +93,7 @@ export async function getServerSideProps(_context) {
 
     return {
       props: {
+        imitialTodos: todos,
         err: "Something went wrong",
       },
     };
