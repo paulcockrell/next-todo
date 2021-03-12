@@ -1,13 +1,22 @@
-import React, { useContext } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { TodosContext } from "../contexts/TodosContext";
 
 export default function Todo({ todo }) {
   const { updateTodo, deleteTodo } = useContext(TodosContext);
+  const [checked, setChecked] = useState(false);
+
+  useEffect(() => {
+    setChecked(todo.fields.completed || false);
+  }, []);
 
   const handleToggleCompleted = () => {
+    const completed = !todo.fields.completed;
+
+    setChecked(completed);
+
     const updatedFields = {
       ...todo.fields,
-      completed: !todo.fields.completed,
+      completed,
     };
     const updatedTodo = { id: todo.id, fields: updatedFields };
     updateTodo(updatedTodo);
@@ -19,7 +28,7 @@ export default function Todo({ todo }) {
         type="checkbox"
         name="completed"
         id="completed"
-        checked={todo.fields.completed}
+        checked={checked}
         className="mr-2 form-checkbox h-5 w-5"
         onChange={handleToggleCompleted}
       />
