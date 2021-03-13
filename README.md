@@ -35,3 +35,9 @@ Copy api keys and app details to `.env.local`
 ```
 npm run dev
 ```
+
+## Deploy
+
+```
+npx serverless --aws-profile <aws.profile>
+```
