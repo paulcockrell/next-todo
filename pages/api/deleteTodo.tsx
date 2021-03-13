@@ -1,11 +1,13 @@
 import { table, minifyRecord } from "./utils/Airtable";
 import OwnsRecord from "./middleware/OwnsRecord";
+import { NextApiRequest, NextApiResponse } from "next";
+import { ITodo } from "../../types";
 
-export default OwnsRecord(async (req, res) => {
+export default OwnsRecord(async (req: NextApiRequest, res: NextApiResponse) => {
   const { id } = req.body;
 
   try {
-    const deletedRecords = await table.destroy([id]);
+    const deletedRecords: ITodo[] = await table.destroy([id]);
 
     res.statusCode = 200;
     res.json(minifyRecord(deletedRecords[0]));

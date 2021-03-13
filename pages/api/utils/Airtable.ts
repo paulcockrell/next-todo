@@ -1,11 +1,13 @@
+import { ITodo, IRecord } from "../../../types";
 const Airtable = require("airtable");
+
 const base = new Airtable({ apiKey: process.env.AIRTABLE_API_KEY }).base(
   process.env.AIRTABLE_BASE_ID
 );
 
 const table = base(process.env.AIRTABLE_TABLE_NAME);
 
-const minifyRecord = (record) => {
+const minifyRecord = (record: IRecord): ITodo => {
   if (!record.fields.completed) {
     record.fields.completed = false;
   }
@@ -16,7 +18,7 @@ const minifyRecord = (record) => {
   };
 };
 
-const minifyRecords = (records) => {
+const minifyRecords = (records: IRecord[]): ITodo[] => {
   return records.map((record) => minifyRecord(record));
 };
 

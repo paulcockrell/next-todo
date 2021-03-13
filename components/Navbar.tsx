@@ -1,6 +1,11 @@
-import React from "react";
+import * as React from "react";
+import { UserProfile } from "@auth0/nextjs-auth0";
 
-export default function Navbar({ user }) {
+type Props = {
+  user: UserProfile;
+};
+
+const Navbar: React.FC<Props> = ({ user }) => {
   return (
     <nav className="flex justify-between items-center py-10">
       <p className="text-2xl font-bold text-grey-800">My Todos</p>
@@ -24,4 +29,6 @@ export default function Navbar({ user }) {
       </div>
     </nav>
   );
-}
+};
+
+export default Navbar;

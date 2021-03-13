@@ -1,12 +1,13 @@
 import React, { useState, useContext } from "react";
 import { TodosContext } from "../contexts/TodosContext";
+import { ContextType } from "../types";
 
-export default function TodoForm() {
-  const [todo, setTodo] = useState("");
-  const { addTodo } = useContext(TodosContext);
+const TodoForm: React.FC = () => {
+  const [todo, setTodo] = useState<string>("");
+  const { addTodo } = useContext(TodosContext) as ContextType;
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const handleSubmit = (event: React.FormEvent) => {
+    event.preventDefault();
     addTodo(todo);
     setTodo("");
   };
@@ -35,4 +36,6 @@ export default function TodoForm() {
       </button>
     </form>
   );
-}
+};
+
+export default TodoForm;

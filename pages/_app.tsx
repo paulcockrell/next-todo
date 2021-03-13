@@ -1,8 +1,9 @@
 import "tailwindcss/tailwind.css";
 import { TodosProvider } from "../contexts/TodosContext";
 import { UserProvider } from "@auth0/nextjs-auth0";
+import { AppProps } from "next/app";
 
-function MyApp({ Component, pageProps }) {
+function App({ Component, pageProps }: AppProps) {
   return (
     <UserProvider>
       <TodosProvider>
@@ -14,4 +15,4 @@ function MyApp({ Component, pageProps }) {
   );
 }
 
-export default MyApp;
+export default App;

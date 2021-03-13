@@ -1,9 +1,14 @@
 import React, { useEffect, useState, useContext } from "react";
 import { TodosContext } from "../contexts/TodosContext";
+import { ITodo, ContextType } from "../types";
 
-export default function Todo({ todo }) {
-  const { updateTodo, deleteTodo } = useContext(TodosContext);
-  const [checked, setChecked] = useState(false);
+type Props = {
+  todo: ITodo;
+};
+
+const Todo: React.FC<Props> = ({ todo }) => {
+  const { updateTodo, deleteTodo } = useContext(TodosContext) as ContextType;
+  const [checked, setChecked] = useState<boolean>(false);
 
   useEffect(() => {
     setChecked(todo.fields.completed || false);
@@ -50,4 +55,6 @@ export default function Todo({ todo }) {
       </button>
     </li>
   );
-}
+};
+
+export default Todo;

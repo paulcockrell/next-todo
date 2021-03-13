@@ -5,11 +5,13 @@ import Todo from "../components/Todo";
 import TodoForm from "../components/TodoForm";
 import { TodosContext } from "../contexts/TodosContext";
 import { useEffect, useContext } from "react";
-import { useUser, getSession, withPageAuthRequired } from "@auth0/nextjs-auth0";
+import { useUser, getSession } from "@auth0/nextjs-auth0";
+import { GetServerSideProps } from "next";
+import { ITodo, ContextType } from "../types";
 
-export default function Home({ initialTodos }) {
+export default function Home({ initialTodos }: { initialTodos: ITodo[] }) {
   const { user, error } = useUser();
-  const { todos, setTodos } = useContext(TodosContext);
+  const { todos, setTodos } = useContext(TodosContext) as ContextType;
 
   useEffect(() => {
     setTodos(initialTodos);
@@ -34,7 +36,8 @@ export default function Home({ initialTodos }) {
             {error && <div>{error.message}</div>}
 
             <ul>
-              {todos && todos.map((todo) => <Todo key={todo.id} todo={todo} />)}
+              {todos &&
+                todos.map((todo: ITodo) => <Todo key={todo.id} todo={todo} />)}
             </ul>
           </>
         )}
@@ -70,8 +73,8 @@ export default function Home({ initialTodos }) {
   });
 */
 
-export async function getServerSideProps({ req, res } = context) {
-  const session = getSession(req, res);
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const session = getSession(context.req, context.res);
 
   let todos = [];
 
@@ -94,9 +97,9 @@ export async function getServerSideProps({ req, res } = context) {
 
     return {
       props: {
-        imitialTodos: todos,
+        initialTodos: todos,
         err: "Something went wrong",
       },
     };
   }
-}
+};

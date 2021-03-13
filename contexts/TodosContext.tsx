@@ -1,9 +1,10 @@
 import { createContext, useState } from "react";
+import { ITodo } from "../types";
 
-const TodosContext = createContext();
+const TodosContext = createContext(null);
 
-const TodosProvider = ({ children }) => {
-  const [todos, setTodos] = useState([]);
+const TodosProvider: React.FC = ({ children }) => {
+  const [todos, setTodos] = useState<ITodo[]>([]);
 
   const refreshTodos = async () => {
     try {
@@ -15,7 +16,7 @@ const TodosProvider = ({ children }) => {
     }
   };
 
-  const addTodo = async (description) => {
+  const addTodo = async (description: string) => {
     try {
       const res = await fetch("/api/createTodo", {
         method: "POST",
@@ -32,7 +33,7 @@ const TodosProvider = ({ children }) => {
     }
   };
 
-  const updateTodo = async (updatedTodo) => {
+  const updateTodo = async (updatedTodo: ITodo) => {
     try {
       const res = await fetch("/api/updateTodo", {
         method: "PUT",
@@ -41,6 +42,7 @@ const TodosProvider = ({ children }) => {
       });
 
       await res.json();
+
       setTodos((prevTodos) => {
         const existingTodos = [...prevTodos];
         const existingTodo = existingTodos.find(
@@ -54,7 +56,7 @@ const TodosProvider = ({ children }) => {
     }
   };
 
-  const deleteTodo = async (id) => {
+  const deleteTodo = async (id: string) => {
     try {
       await fetch("/api/deleteTodo", {
         method: "DELETE",
