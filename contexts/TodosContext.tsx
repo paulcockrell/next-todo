@@ -1,16 +1,26 @@
 import { createContext, useState } from "react";
-import { ITodo } from "../types";
+import { ITodo, ICursor } from "../types";
 
 const TodosContext = createContext(null);
 
 const TodosProvider: React.FC = ({ children }) => {
   const [todos, setTodos] = useState<ITodo[]>([]);
+  const [cursor, setCursor] = useState<ICursor>({ before: null, after: null });
 
-  const refreshTodos = async () => {
+  const refreshTodos = async (size: Number, cursor: string) => {
     try {
-      const res = await fetch("/api/getTodos");
-      const latestTodos = await res.json();
-      setTodos(latestTodos);
+      const res = await fetch("/api/getTodos", {
+        method: "POST",
+        body: JSON.stringify({ size, cursor }),
+        headers: { "Content-Type": "application/json" },
+      });
+      const { data, before, after } = await res.json();
+
+      setTodos(data);
+      setCursor({
+        before: before,
+        after: after,
+      });
     } catch (err) {
       console.error(err);
     }
@@ -81,6 +91,8 @@ const TodosProvider: React.FC = ({ children }) => {
         updateTodo,
         deleteTodo,
         addTodo,
+        cursor,
+        setCursor,
       }}
     >
       {children}

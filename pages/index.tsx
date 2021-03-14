@@ -2,21 +2,31 @@ import Head from "next/head";
 import Navbar from "../components/Navbar";
 import Todo from "../components/Todo";
 import TodoForm from "../components/TodoForm";
+import Pagination from "../components/Pagination";
 import { TodosContext } from "../contexts/TodosContext";
 import { useEffect, useContext } from "react";
 import { useUser, getSession } from "@auth0/nextjs-auth0";
 import { GetServerSideProps } from "next";
-import { ITodo, ContextType } from "../types";
+import { ITodo, ICursor, ContextType } from "../types";
 
 import { gql } from "graphql-request";
 import { graphQLClient } from "../utils/graphql-client";
 
-export default function Home({ initialTodos }: { initialTodos: ITodo[] }) {
+export default function Home({
+  initialTodos,
+  initialCursor,
+}: {
+  initialTodos: ITodo[];
+  initialCursor: ICursor;
+}) {
   const { user, error } = useUser();
-  const { todos, setTodos } = useContext(TodosContext) as ContextType;
+  const { todos, setTodos, cursor, setCursor } = useContext(
+    TodosContext
+  ) as ContextType;
 
   useEffect(() => {
     setTodos(initialTodos);
+    setCursor(initialCursor);
   }, []);
 
   return (
@@ -41,6 +51,8 @@ export default function Home({ initialTodos }: { initialTodos: ITodo[] }) {
               {todos &&
                 todos.map((todo) => <Todo key={todo._id} todo={todo} />)}
             </ul>
+
+            <Pagination cursor={cursor} />
           </>
         )}
         {!user && <p>You should log in to save your todos</p>}
@@ -78,18 +90,24 @@ export default function Home({ initialTodos }: { initialTodos: ITodo[] }) {
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const { user } = getSession(context.req, context.res);
   let todos: ITodo[] = [];
+  let cursor: ICursor = {
+    before: null,
+    after: null,
+  };
 
   try {
     if (user) {
       const query = gql`
         query GetUserTodos($userId: String!) {
-          allTodos(userId: $userId) {
+          allTodos(userId: $userId, _size: 10) {
             data {
               description
               completed
               userId
               _id
             }
+            before
+            after
           }
         }
       `;
@@ -98,12 +116,16 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       };
 
       const { allTodos } = await graphQLClient.request(query, variables);
-      if (allTodos) todos = allTodos.data;
+      if (allTodos) {
+        todos = allTodos.data;
+        cursor = { before: allTodos.before, after: allTodos.after };
+      }
     }
 
     return {
       props: {
         initialTodos: todos,
+        initialCursor: cursor,
       },
     };
   } catch (err) {
