@@ -13,9 +13,3 @@ export type ContextType = {
   updateTodo: (updatedTodo: ITodo) => void;
   deleteTodo: (id: string) => void;
 };
-
-export type IRecord =
-  | {
-      [key: string]: any;
-    }
-  | ITodo;

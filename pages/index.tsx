@@ -76,28 +76,29 @@ export default function Home({ initialTodos }: { initialTodos: ITodo[] }) {
 */
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  const session = getSession(context.req, context.res);
+  const { user } = getSession(context.req, context.res);
   let todos: ITodo[] = [];
 
   try {
-    if (session?.user) {
-      const {
-        allTodos: { data },
-      } = await graphQLClient.request(
-        gql`
-          {
-            allTodos {
-              data {
-                _id
-                description
-                completed
-                userId
-              }
+    if (user) {
+      const query = gql`
+        query GetUserTodos($userId: String!) {
+          allTodos(userId: $userId) {
+            data {
+              description
+              completed
+              userId
+              _id
             }
           }
-        `
-      );
-      if (data) todos = data;
+        }
+      `;
+      const variables = {
+        userId: user.sub,
+      };
+
+      const { allTodos } = await graphQLClient.request(query, variables);
+      if (allTodos) todos = allTodos.data;
     }
 
     return {

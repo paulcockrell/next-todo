@@ -5,5 +5,5 @@ type Todo {
 }
 
 type Query {
-  allTodos: [Todo!]
+  allTodos(userId: String!): [Todo!]
 }
