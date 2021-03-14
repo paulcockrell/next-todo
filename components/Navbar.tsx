@@ -8,12 +8,12 @@ type Props = {
 const Navbar: React.FC<Props> = ({ user }) => {
   return (
     <nav className="flex justify-between items-center py-10">
-      <p className="text-2xl font-bold text-grey-800">My Todos</p>
+      <p className="text-2xl font-bold text-grey-800">Hello, Todo'er!</p>
       <div className="flex">
         {user && (
           <a
             href="/api/auth/logout"
-            className="rounded bg-blue-500 hover:bg-blue-600 text-white py-2 px-4"
+            className="rounded bg-yellow-400 hover:bg-yellow-500 text-white py-2 px-4"
           >
             Logout
           </a>

@@ -41,7 +41,7 @@ export default function Home({
       <main>
         {user && (
           <>
-            <h1 className="text-2xl text-center mb-4">My Todos</h1>
+            <h1 className="text-2xl text-center mb-4">📝 My Todos ✅</h1>
 
             <TodoForm />
 
@@ -88,7 +88,7 @@ export default function Home({
 */
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  const { user } = getSession(context.req, context.res);
+  const session = getSession(context.req, context.res);
   let todos: ITodo[] = [];
   let cursor: ICursor = {
     before: null,
@@ -96,7 +96,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   };
 
   try {
-    if (user) {
+    if (session?.user) {
       const query = gql`
         query GetUserTodos($userId: String!) {
           allTodos(userId: $userId, _size: 10) {
@@ -112,7 +112,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         }
       `;
       const variables = {
-        userId: user.sub,
+        userId: session.user.sub,
       };
 
       const { allTodos } = await graphQLClient.request(query, variables);

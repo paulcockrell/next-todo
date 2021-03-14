@@ -14,19 +14,23 @@ const Pagination: React.FC<Props> = ({ cursor }) => {
   };
 
   return (
-    <div>
+    <div className="text-center p-4">
       <button
         type="button"
         disabled={cursor.before === null}
-        className="text-sm bg-green-500 hover:bg-green-600 text-white py-1 px-2 rounded"
+        className={`bg-green-300 hover:bg-green-400 text-white font-bold py-2 px-4 rounded-l ${
+          !cursor.before ? "opacity-50 cursor-not-allowed" : ""
+        }`}
         onClick={() => handleClick(cursor.before)}
       >
-        Previous
+        Prev
       </button>
       <button
         type="button"
         disabled={cursor.after === null}
-        className="text-sm bg-green-500 hover:bg-green-600 text-white py-1 px-2 rounded"
+        className={`bg-green-300 hover:bg-green-400 text-white font-bold py-2 px-4 rounded-r ${
+          !cursor.after ? "opacity-50 cursor-not-allowed" : ""
+        }`}
         onClick={() => handleClick(cursor.after)}
       >
         Next
