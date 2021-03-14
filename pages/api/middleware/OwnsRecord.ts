@@ -1,10 +1,11 @@
-import { table } from "../utils/Airtable";
 import { withApiAuthRequired, getSession } from "@auth0/nextjs-auth0";
 import { NextApiRequest, NextApiResponse } from "next";
-import { IRecord } from "../../../types";
+import { gql } from "graphql-request";
+import { graphQLClient } from "../../../utils/graphql-client";
+import { ITodo } from "../../../types/index";
 
 type Data = {
-  record: IRecord;
+  record: ITodo;
 };
 
 type Handler = (req: NextApiRequest, res: NextApiResponse) => void;
@@ -13,17 +14,29 @@ const ownsRecord = (handler: Handler) =>
   withApiAuthRequired(
     async (req: NextApiRequest & Data, res: NextApiResponse) => {
       const { user } = getSession(req, res);
-      const { id } = req.body;
+      const { _id } = req.body;
+      const query = gql`
+        query FindATodoByID($id: ID!) {
+          findTodoByID(id: $id) {
+            description
+            completed
+            userId
+          }
+        }
+      `;
+      const variables = {
+        id: _id,
+      };
+
+      const { findTodoByID } = await graphQLClient.request(query, variables);
 
       try {
-        const existingRecord: IRecord = await table.find(id);
-
-        if (user.sub !== existingRecord?.fields.userId) {
+        if (user.sub !== findTodoByID?.userId) {
           res.statusCode = 404;
           return res.json({ msg: "Record not found" });
         }
 
-        req.record = existingRecord;
+        req.record = findTodoByID;
 
         return handler(req, res);
       } catch (err) {

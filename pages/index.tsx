@@ -1,6 +1,5 @@
 import Head from "next/head";
 import Navbar from "../components/Navbar";
-import { table, minifyRecords } from "./api/utils/Airtable";
 import Todo from "../components/Todo";
 import TodoForm from "../components/TodoForm";
 import { TodosContext } from "../contexts/TodosContext";
@@ -8,6 +7,9 @@ import { useEffect, useContext } from "react";
 import { useUser, getSession } from "@auth0/nextjs-auth0";
 import { GetServerSideProps } from "next";
 import { ITodo, ContextType } from "../types";
+
+import { gql } from "graphql-request";
+import { graphQLClient } from "../utils/graphql-client";
 
 export default function Home({ initialTodos }: { initialTodos: ITodo[] }) {
   const { user, error } = useUser();
@@ -37,7 +39,7 @@ export default function Home({ initialTodos }: { initialTodos: ITodo[] }) {
 
             <ul>
               {todos &&
-                todos.map((todo: ITodo) => <Todo key={todo.id} todo={todo} />)}
+                todos.map((todo) => <Todo key={todo._id} todo={todo} />)}
             </ul>
           </>
         )}
@@ -75,21 +77,32 @@ export default function Home({ initialTodos }: { initialTodos: ITodo[] }) {
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const session = getSession(context.req, context.res);
-
-  let todos = [];
+  let todos: ITodo[] = [];
 
   try {
     if (session?.user) {
-      todos = await table
-        .select({
-          filterByFormula: `userId = "${session.user.sub}"`,
-        })
-        .firstPage();
+      const {
+        allTodos: { data },
+      } = await graphQLClient.request(
+        gql`
+          {
+            allTodos {
+              data {
+                _id
+                description
+                completed
+                userId
+              }
+            }
+          }
+        `
+      );
+      if (data) todos = data;
     }
 
     return {
       props: {
-        initialTodos: minifyRecords(todos),
+        initialTodos: todos,
       },
     };
   } catch (err) {

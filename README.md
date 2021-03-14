@@ -1,6 +1,6 @@
 # Todo App
 
-Todo app built with NextJS. Using Auth0 and Airtable
+Todo app built with NextJS. Using Auth0 and FaunaDB
 
 ## Prerequisits
 
@@ -15,20 +15,25 @@ Copy `.env.local.template` to .env.local
 
 ### Auth0
 
-Create Auth0 account (free) and follow this [auth0 guide](https://github.com/auth0/nextjs-auth0#getting-started) on setting up your application correctly.
+Create [Auth0](https://auth0.com) account and follow this [auth0 guide](https://github.com/auth0/nextjs-auth0#getting-started) on setting up your application correctly.
 
 Copy keys in to `.env.local`
+```
+AUTH0_SECRET=""
+AUTH0_BASE_URL=""
+AUTH0_ISSUER_BASE_URL=""
+AUTH0_CLIENT_ID=""
+AUTH0_CLIENT_SECRET=""
+```
 
-### Airtable
+### FaunaDB
 
-Create Airtable account (free) and setup an app, and a 'base' called `todo`. In the `todo` (data)base
-modify it to have the following fields
+Create [FaunaDB](https://fauna.com) account and setup an app, and a new database (collection) called `Todo` for example.
 
-1. Name: `description`, type: `Single line text`
-2. Name: `completed`, type: `Checkbox`
-3. Name: `userId`, type: `Single line text`
-
-Copy api keys and app details to `.env.local`
+In security create a new key, and copy it to `.env.local`
+```
+FAUNA_DB=""
+```
 
 ## Run
 

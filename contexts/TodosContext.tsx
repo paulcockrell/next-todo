@@ -24,7 +24,7 @@ const TodosProvider: React.FC = ({ children }) => {
         headers: { "Content-Type": "application/json" },
       });
 
-      const newTodo = await res.json();
+      const newTodo: ITodo = await res.json();
       setTodos((prevTodos) => {
         return [newTodo, ...prevTodos];
       });
@@ -45,10 +45,10 @@ const TodosProvider: React.FC = ({ children }) => {
 
       setTodos((prevTodos) => {
         const existingTodos = [...prevTodos];
-        const existingTodo = existingTodos.find(
-          (todo) => todo.id === updatedTodo.id
+        let existingTodo = existingTodos.find(
+          (todo) => todo._id === updatedTodo._id
         );
-        existingTodo.fields = updatedTodo.fields;
+        existingTodo = updatedTodo;
         return existingTodos;
       });
     } catch (err) {
@@ -60,12 +60,12 @@ const TodosProvider: React.FC = ({ children }) => {
     try {
       await fetch("/api/deleteTodo", {
         method: "DELETE",
-        body: JSON.stringify({ id }),
+        body: JSON.stringify({ _id: id }),
         headers: { "Content-Type": "application/json" },
       });
 
       setTodos((prevTodos) => {
-        return prevTodos.filter((todo) => todo.id !== id);
+        return prevTodos.filter((todo) => todo._id !== id);
       });
     } catch (err) {
       console.error(err);

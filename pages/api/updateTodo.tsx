@@ -1,16 +1,45 @@
-import { table, minifyRecord } from "./utils/Airtable";
-import OwnsRecord from "./middleware/OwnsRecord";
+import { getSession } from "@auth0/nextjs-auth0";
 import { NextApiRequest, NextApiResponse } from "next";
-import { ITodo } from "../../types";
+import { gql } from "graphql-request";
+import { graphQLClient } from "../../utils/graphql-client";
+import OwnsRecord from "./middleware/OwnsRecord";
 
 export default OwnsRecord(async (req: NextApiRequest, res: NextApiResponse) => {
-  const { id, fields } = req.body;
+  const { user } = getSession(req, res);
+  const { _id, description, completed } = req.body;
+  const query = gql`
+    mutation UpdateTodo(
+      $id: ID!
+      $description: String!
+      $completed: Boolean!
+      $userId: String!
+    ) {
+      updateTodo(
+        id: $id
+        data: {
+          description: $description
+          completed: $completed
+          userId: $userId
+        }
+      ) {
+        description
+        completed
+        userId
+      }
+    }
+  `;
+  const variables = {
+    id: _id,
+    description: description,
+    completed: completed,
+    userId: user.sub,
+  };
 
   try {
-    const updatedRecords: ITodo[] = await table.update([{ id, fields }]);
+    const { updateTodo } = await graphQLClient.request(query, variables);
 
     res.statusCode = 200;
-    res.json(minifyRecord(updatedRecords[0]));
+    res.json(updateTodo);
   } catch (err) {
     console.error(err);
     res.statusCode = 500;
