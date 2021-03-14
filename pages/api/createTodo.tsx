@@ -1,7 +1,7 @@
-import { table } from "./utils/Airtable";
 import { withApiAuthRequired, getSession } from "@auth0/nextjs-auth0";
 import { NextApiRequest, NextApiResponse } from "next";
-import { ITodo } from "../../types";
+import { gql } from "graphql-request";
+import { graphQLClient } from "../../utils/graphql-client";
 
 export default withApiAuthRequired(
   async (req: NextApiRequest, res: NextApiResponse) => {
@@ -9,16 +9,33 @@ export default withApiAuthRequired(
     const { description } = req.body;
 
     try {
-      const createdRecords: ITodo[] = await table.create([
-        { fields: { description, userId: user.sub } },
-      ]);
-      const createdRecord: ITodo = {
-        id: createdRecords[0].id,
-        fields: createdRecords[0].fields,
+      const query = gql`
+        mutation CreateATodo($description: String!, $userId: String!) {
+          createTodo(
+            data: {
+              description: $description
+              completed: false
+              userId: $userId
+            }
+          ) {
+            _id
+            description
+            completed
+            userId
+          }
+        }
+      `;
+
+      const variables = {
+        description: description,
+        userId: user.sub,
+        completed: false,
       };
 
+      const { createTodo } = await graphQLClient.request(query, variables);
+
       res.statusCode = 200;
-      res.json(createdRecord);
+      res.json(createTodo);
     } catch (err) {
       console.error(err);
       res.statusCode = 500;

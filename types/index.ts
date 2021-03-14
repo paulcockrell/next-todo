@@ -1,10 +1,8 @@
 export interface ITodo {
-  id: string;
-  fields: {
-    description: string;
-    completed: boolean;
-    userId: string;
-  };
+  _id: string;
+  description: string;
+  completed: boolean;
+  userId: string;
 }
 
 export type ContextType = {

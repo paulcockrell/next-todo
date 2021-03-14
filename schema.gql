@@ -1,0 +1,9 @@
+type Todo {
+  description: String!
+  completed: Boolean!
+  userId: String!
+}
+
+type Query {
+  allTodos: [Todo!]
+}

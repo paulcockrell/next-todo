@@ -8,6 +8,25 @@ export default withApiAuthRequired(
     const { user } = getSession(req, res);
 
     try {
+      /*
+      const {
+        allTodos: { data },
+      } = await graphQLClient.request(
+        gql`
+          {
+            allTodos {
+              data {
+                _id
+                description
+                completed
+                userId
+              }
+            }
+          }
+        `
+      );
+       */
+
       const records: IRecord[] = await table
         .select({
           filterByFormula: `userId = ${user.sub}`,

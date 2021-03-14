@@ -1,16 +1,26 @@
-import { table, minifyRecord } from "./utils/Airtable";
 import OwnsRecord from "./middleware/OwnsRecord";
 import { NextApiRequest, NextApiResponse } from "next";
-import { ITodo } from "../../types";
+import { gql } from "graphql-request";
+import { graphQLClient } from "../../utils/graphql-client";
 
 export default OwnsRecord(async (req: NextApiRequest, res: NextApiResponse) => {
-  const { id } = req.body;
+  const { _id } = req.body;
+  const query = gql`
+    mutation DeleteATodo($id: ID!) {
+      deleteTodo(id: $id) {
+        _id
+      }
+    }
+  `;
+  const variables = {
+    id: _id,
+  };
 
   try {
-    const deletedRecords: ITodo[] = await table.destroy([id]);
+    const { deleteTodo } = await graphQLClient.request(query, variables);
 
     res.statusCode = 200;
-    res.json(minifyRecord(deletedRecords[0]));
+    res.json(deleteTodo);
   } catch (err) {
     console.error(err);
     res.statusCode = 500;

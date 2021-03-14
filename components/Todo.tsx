@@ -11,24 +11,27 @@ const Todo: React.FC<Props> = ({ todo }) => {
   const [checked, setChecked] = useState<boolean>(false);
 
   useEffect(() => {
-    setChecked(todo.fields.completed || false);
+    setChecked(todo.completed || false);
   }, []);
 
   const handleToggleCompleted = () => {
-    const completed = !todo.fields.completed;
+    const completed = !checked;
 
     setChecked(completed);
 
-    const updatedFields = {
-      ...todo.fields,
+    const updatedTodo: ITodo = {
+      ...todo,
       completed,
     };
-    const updatedTodo = { id: todo.id, fields: updatedFields };
+
     updateTodo(updatedTodo);
   };
 
   return (
-    <li className="bg-white flex items-center shadow-lg rounder-lg my-2 py-2 px-4">
+    <li
+      key={todo._id}
+      className="bg-white flex items-center shadow-lg rounder-lg my-2 py-2 px-4"
+    >
       <input
         type="checkbox"
         name="completed"
@@ -38,18 +41,14 @@ const Todo: React.FC<Props> = ({ todo }) => {
         onChange={handleToggleCompleted}
       />
 
-      <p
-        className={`flex-1 text-gray-800 ${
-          todo.fields.completed ? "line-through" : ""
-        }`}
-      >
-        {todo.fields.description}
+      <p className={`flex-1 text-gray-800 ${checked ? "line-through" : ""}`}>
+        {todo.description}
       </p>
 
       <button
         type="button"
         className="text-sm bg-red-500 hover:bg-red-600 text-white py-1 px-2 rounded"
-        onClick={() => deleteTodo(todo.id)}
+        onClick={() => deleteTodo(todo._id)}
       >
         Delete
       </button>
