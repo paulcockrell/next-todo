@@ -10,6 +10,19 @@ export interface ICursor {
   after: string | null;
 }
 
+export enum INotificationType {
+  None,
+  Info,
+  Warning,
+  Success,
+  Error,
+}
+
+export interface INotification {
+  type: INotificationType;
+  message: string;
+}
+
 export type ContextType = {
   todos: ITodo[];
   setTodos: (todos: ITodo[]) => void;
@@ -21,4 +34,6 @@ export type ContextType = {
   addTodo: (description: string) => void;
   updateTodo: (updatedTodo: ITodo) => void;
   deleteTodo: (id: string) => void;
+
+  notification: INotification;
 };

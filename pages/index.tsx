@@ -3,6 +3,7 @@ import Navbar from "../components/Navbar";
 import Todo from "../components/Todo";
 import TodoForm from "../components/TodoForm";
 import Pagination from "../components/Pagination";
+import Notification from "../components/Notification";
 import { TodosContext } from "../contexts/TodosContext";
 import { useEffect, useContext } from "react";
 import { useUser, getSession } from "@auth0/nextjs-auth0";
@@ -20,7 +21,7 @@ export default function Home({
   initialCursor: ICursor;
 }) {
   const { user, error } = useUser();
-  const { todos, setTodos, cursor, setCursor } = useContext(
+  const { todos, setTodos, cursor, setCursor, notification } = useContext(
     TodosContext
   ) as ContextType;
 
@@ -42,6 +43,8 @@ export default function Home({
         {user && (
           <>
             <h1 className="text-2xl text-center mb-4">📝 My Todos ✅</h1>
+
+            <Notification notification={notification} />
 
             <TodoForm />
 

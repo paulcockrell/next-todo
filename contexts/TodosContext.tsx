@@ -1,11 +1,15 @@
 import { createContext, useState } from "react";
-import { ITodo, ICursor } from "../types";
+import { ITodo, ICursor, INotification, INotificationType } from "../types";
 
 const TodosContext = createContext(null);
 
 const TodosProvider: React.FC = ({ children }) => {
   const [todos, setTodos] = useState<ITodo[]>([]);
   const [cursor, setCursor] = useState<ICursor>({ before: null, after: null });
+  const [notification, setNotification] = useState<INotification>({
+    type: INotificationType.None,
+    message: "",
+  });
 
   const refreshTodos = async (size: Number, cursor: string) => {
     try {
@@ -17,12 +21,22 @@ const TodosProvider: React.FC = ({ children }) => {
       const { data, before, after } = await res.json();
 
       setTodos(data);
+
       setCursor({
         before: before,
         after: after,
       });
+
+      setNotification({
+        type: INotificationType.Info,
+        message: "Refreshed todos",
+      });
     } catch (err) {
       console.error(err);
+      setNotification({
+        type: INotificationType.Error,
+        message: "Failed to refresh todos",
+      });
     }
   };
 
@@ -35,11 +49,21 @@ const TodosProvider: React.FC = ({ children }) => {
       });
 
       const newTodo: ITodo = await res.json();
+
       setTodos((prevTodos) => {
         return [newTodo, ...prevTodos];
       });
+
+      setNotification({
+        type: INotificationType.Success,
+        message: "Added todo",
+      });
     } catch (err) {
       console.error(err);
+      setNotification({
+        type: INotificationType.Error,
+        message: "Failed to add todo",
+      });
     }
   };
 
@@ -61,8 +85,17 @@ const TodosProvider: React.FC = ({ children }) => {
         existingTodo = updatedTodo;
         return existingTodos;
       });
+
+      setNotification({
+        type: INotificationType.Success,
+        message: "Updated todo",
+      });
     } catch (err) {
       console.error(err);
+      setNotification({
+        type: INotificationType.Error,
+        message: "Failed to update todo",
+      });
     }
   };
 
@@ -77,8 +110,17 @@ const TodosProvider: React.FC = ({ children }) => {
       setTodos((prevTodos) => {
         return prevTodos.filter((todo) => todo._id !== id);
       });
+
+      setNotification({
+        type: INotificationType.Success,
+        message: "Deleted todo",
+      });
     } catch (err) {
       console.error(err);
+      setNotification({
+        type: INotificationType.Error,
+        message: "Failed to delete todo",
+      });
     }
   };
 
@@ -93,6 +135,7 @@ const TodosProvider: React.FC = ({ children }) => {
         addTodo,
         cursor,
         setCursor,
+        notification,
       }}
     >
       {children}
