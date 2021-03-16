@@ -26,6 +26,7 @@ export interface INotification {
 export type ContextType = {
   todos: ITodo[];
   setTodos: (todos: ITodo[]) => void;
+  isAddingTodo: boolean;
 
   cursor: ICursor;
   setCursor: (cursor: ICursor) => void;

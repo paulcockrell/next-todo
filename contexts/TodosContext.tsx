@@ -5,6 +5,7 @@ const TodosContext = createContext(null);
 
 const TodosProvider: React.FC = ({ children }) => {
   const [todos, setTodos] = useState<ITodo[]>([]);
+  const [isAddingTodo, setIsAddingTodo] = useState<boolean>(false);
   const [cursor, setCursor] = useState<ICursor>({ before: null, after: null });
   const [notification, setNotification] = useState<INotification>({
     type: INotificationType.None,
@@ -41,6 +42,8 @@ const TodosProvider: React.FC = ({ children }) => {
   };
 
   const addTodo = async (description: string) => {
+    setIsAddingTodo(true);
+
     try {
       const res = await fetch("/api/createTodo", {
         method: "POST",
@@ -64,6 +67,8 @@ const TodosProvider: React.FC = ({ children }) => {
         type: INotificationType.Error,
         message: "Failed to add todo",
       });
+    } finally {
+      setIsAddingTodo(false);
     }
   };
 
@@ -129,6 +134,7 @@ const TodosProvider: React.FC = ({ children }) => {
       value={{
         todos,
         setTodos,
+        isAddingTodo,
         refreshTodos,
         updateTodo,
         deleteTodo,
