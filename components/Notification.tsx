@@ -79,9 +79,9 @@ const Notification: React.FC<Props> = ({ notification }) => {
     notification.type !== INotificationType.None && (
       <div className="flex flex-col jusctify-center">
         <div
-          className={`flex items-center bg-${color}-500 border-l-4 border-${color}-700 py-2 px-3 shadow-md mb-2`}
+          className={`flex items-center bg-${color}-300 border-l-4 border-${color}-400 py-2 px-3 shadow-md mb-2`}
         >
-          <div className={`text-${color}-500 rounded-full bg-white mr-3`}>
+          <div className={`text-${color}-400 rounded-full bg-white mr-3`}>
             {icon}
           </div>
           <div className="text-white max-w-xs ">{notification.message}</div>

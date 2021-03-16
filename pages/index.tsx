@@ -31,7 +31,7 @@ export default function Home({
   }, []);
 
   return (
-    <div>
+    <div className="mx-5">
       <Head>
         <title>Todo App</title>
         <link rel="icon" href="/favicon.ico" />

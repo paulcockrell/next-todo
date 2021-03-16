@@ -20,16 +20,16 @@ const TodosProvider: React.FC = ({ children }) => {
       });
       const { data, before, after } = await res.json();
 
+      setNotification({
+        type: INotificationType.None,
+        message: "",
+      });
+
       setTodos(data);
 
       setCursor({
         before: before,
         after: after,
-      });
-
-      setNotification({
-        type: INotificationType.Info,
-        message: "Refreshed todos",
       });
     } catch (err) {
       console.error(err);
