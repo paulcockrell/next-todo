@@ -29,7 +29,7 @@ const TodoForm: React.FC = () => {
         />
       </div>
       <button
-        type="button"
+        type="submit"
         className={`w-full inline-flex justify-center items-center px-4 py-2 border border-transparent text-base leading-6 font-medium rounded-md text-white bg-blue-500 hover:bg-blue-600 focus:border-blue-700 active:bg-blue-700 transition ease-in-out duration-150 ${
           isAddingTodo ? "cursor-not-allowed" : ""
         }`}
